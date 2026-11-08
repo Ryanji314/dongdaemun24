@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7fbff">
+  <meta name="description" content="동대문구 공공시설위치 통합앱, 내 주변 시설들을 간편하게 찾아보세요.">
+  <title>동대문24 | 내 주변 공공시설</title>
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR", sans-serif;
+      color: #182536;
+      background: #f4f8fc;
+      font-synthesis: none;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+      --blue: #075bd8;
+      --green: #087b3b;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-width: 320px; min-height: 100vh; }
+    .page {
+      width: min(100% - 32px, 1080px);
+      margin: 0 auto;
+      padding: clamp(24px, 5vh, 56px) 0 36px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: clamp(18px, 3vh, 28px);
+    }
+    .intro { display: flex; flex-direction: column; align-items: center; text-align: center; }
+    .logo {
+      display: block;
+      width: clamp(88px, 14vw, 136px);
+      aspect-ratio: 1;
+      object-fit: cover;
+      border-radius: 24%;
+      box-shadow: 0 8px 22px #1557a51a;
+    }
+    h1 { margin: 13px 0 6px; color: var(--blue); font-size: clamp(2rem, 5vw, 3.1rem); line-height: 1.12; letter-spacing: -.045em; }
+    .tagline { max-width: 38rem; margin: 0; color: #222; font-size: clamp(.95rem, 2.2vw, 1.12rem); line-height: 1.65; }
+    .categories {
+      width: min(100%, 820px);
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: clamp(9px, 2vw, 18px);
+    }
+    .category {
+      min-height: 108px;
+      padding: 13px 8px 12px;
+      border: 2px solid #171717;
+      border-radius: 16px;
+      background: #fff;
+      color: var(--green);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font: inherit;
+      font-weight: 750;
+      font-size: clamp(.78rem, 2.15vw, 1.05rem);
+      line-height: 1.25;
+      text-align: center;
+      cursor: default;
+    }
+    .category img { width: clamp(34px, 6vw, 48px); height: clamp(34px, 6vw, 48px); object-fit: contain; }
+    .map-section { width: min(100%, 920px); }
+    .map-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 0 2px 10px; }
+    h2 { margin: 0; font-size: clamp(1.05rem, 2.8vw, 1.3rem); }
+    .map-note { margin: 0; color: #637184; font-size: .82rem; }
+    .map-frame { position: relative; overflow: hidden; border: 1px solid #d5e0e8; border-radius: 20px; background: #e7f0df; box-shadow: 0 12px 30px #1c39500d; }
+    .map-art { display: block; width: 100%; height: clamp(245px, 42vh, 410px); }
+    .map-marker { position: absolute; width: clamp(30px, 5vw, 43px); height: clamp(30px, 5vw, 43px); padding: 5px; border: 2px solid #fff; border-radius: 50%; background: #fff; box-shadow: 0 2px 9px #13283b38; object-fit: contain; }
+    .marker-bin { left: 24%; top: 27%; }
+    .marker-toilet { right: 23%; top: 24%; }
+    .marker-bike { left: 67%; bottom: 21%; }
+    .you-are-here { position: absolute; left: 50%; top: 51%; transform: translate(-50%, -50%); display: grid; justify-items: center; gap: 2px; }
+    .you-are-here span { padding: 3px 8px; border-radius: 999px; background: #fff; color: #174a7b; font-size: .72rem; font-weight: 750; box-shadow: 0 1px 5px #13283b22; white-space: nowrap; }
+    .you-are-here i { width: 19px; height: 19px; border: 4px solid #fff; border-radius: 50%; background: #1677ff; box-shadow: 0 0 0 6px #1677ff3d, 0 2px 7px #1235; }
+    .legend { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px 18px; padding: 11px 12px 12px; color: #344456; font-size: .82rem; }
+    .legend-item { display: inline-flex; align-items: center; gap: 6px; }
+    .legend-item img { width: 20px; height: 20px; object-fit: contain; }
+    footer { color: #718094; font-size: .75rem; text-align: center; }
+    @media (max-width: 480px) {
+      .page { width: min(100% - 24px, 1080px); padding-top: 24px; gap: 20px; }
+      .category { min-height: 98px; border-radius: 13px; }
+      .map-heading { align-items: flex-start; flex-direction: column; gap: 2px; }
+      .map-art { height: 270px; }
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      .category { transition: background-color .15s ease, transform .15s ease; }
+      .category:hover { background: #f5fff8; transform: translateY(-2px); }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="intro">
+      <img class="logo" src="동대문24 아이콘.jpg" alt="동대문24 로고">
+      <h1>동대문24</h1>
+      <p class="tagline">동대문구 공공시설위치 통합앱, 내 주변 시설들을 간편하게 찾아보세요.</p>
+    </header>
+
+    <nav class="categories" aria-label="주변 시설 종류">
+      <button class="category" type="button" aria-label="내 주변 쓰레기통 (준비 중)">
+        <img src="쓰레기통 아이콘.jpg" alt="">
+        <span>내 주변 쓰레기통</span>
+      </button>
+      <button class="category" type="button" aria-label="내 주변 공중화장실 (준비 중)">
+        <img src="화장실 아이콘.jpg" alt="">
+        <span>내 주변 공중화장실</span>
+      </button>
+      <button class="category" type="button" aria-label="내 주변 공공자전거 (준비 중)">
+        <img src="자전거 아이콘.jpg" alt="">
+        <span>내 주변 공공자전거</span>
+      </button>
+    </nav>
+
+    <section class="map-section" aria-labelledby="map-title">
+      <div class="map-heading">
+        <h2 id="map-title">내 주변 공공시설</h2>
+        <p class="map-note">지도와 위치 아이콘은 화면 예시입니다.</p>
+      </div>
+      <div class="map-frame" role="img" aria-label="현재 위치와 주변 시설 아이콘을 표시한 지도 미리보기">
+        <svg class="map-art" viewBox="0 0 900 390" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          <rect width="900" height="390" fill="#e8f0df"/>
+          <path d="M0 66 220 0h165l-82 390H0zM650 0h250v390H570z" fill="#d9e9ce"/>
+          <path d="M-50 288 910 48M-20 375 840 0M90-30 400 420M490-20 250 420M650-25 900 300" fill="none" stroke="#fff" stroke-width="34"/>
+          <path d="M-50 288 910 48M-20 375 840 0M90-30 400 420M490-20 250 420M650-25 900 300" fill="none" stroke="#d7dfe2" stroke-width="2" stroke-dasharray="8 8"/>
+          <path d="M0 152h250v85H0M358 0v108h155v72h145M490 390V255h220v-55h190M184 0v93h110v65h150" fill="none" stroke="#fff" stroke-width="18"/>
+          <path d="M0 152h250v85H0M358 0v108h155v72h145M490 390V255h220v-55h190M184 0v93h110v65h150" fill="none" stroke="#d7dfe2" stroke-width="1.5"/>
+          <g fill="#c8dfbd"><rect x="48" y="35" width="95" height="42" rx="8"/><rect x="279" y="269" width="115" height="62" rx="8"/><rect x="718" y="89" width="115" height="60" rx="8"/><rect x="697" y="288" width="130" height="55" rx="8"/><rect x="398" y="25" width="75" height="50" rx="8"/></g>
+          <g fill="#c7dbf5"><rect x="179" y="265" width="75" height="48" rx="8"/><rect x="545" y="50" width="75" height="48" rx="8"/><rect x="76" y="97" width="65" height="35" rx="8"/></g>
+          <g fill="#78906f" font-family="system-ui, sans-serif" font-size="13" font-weight="600"><text x="48" y="226">공원</text><text x="731" y="176">동네 시설</text><text x="308" y="355">주거 지역</text><text x="540" y="326">산책길</text></g>
+          <path d="M0 337 Q150 310 290 330T570 323T900 340" fill="none" stroke="#9bc8e8" stroke-width="12" opacity=".8"/>
+        </svg>
+        <img class="map-marker marker-bin" src="쓰레기통 아이콘.jpg" alt="쓰레기통 위치 예시">
+        <img class="map-marker marker-toilet" src="화장실 아이콘.jpg" alt="공중화장실 위치 예시">
+        <img class="map-marker marker-bike" src="자전거 아이콘.jpg" alt="공공자전거 위치 예시">
+        <div class="you-are-here" aria-hidden="true"><span>내 위치 예시</span><i></i></div>
+        <div class="legend" aria-label="지도 아이콘 안내">
+          <span class="legend-item"><img src="쓰레기통 아이콘.jpg" alt="">쓰레기통</span>
+          <span class="legend-item"><img src="화장실 아이콘.jpg" alt="">공중화장실</span>
+          <span class="legend-item"><img src="자전거 아이콘.jpg" alt="">공공자전거</span>
+          <span class="legend-item"><i style="display:inline-block;width:12px;height:12px;border:3px solid white;border-radius:50%;background:#1677ff;box-shadow:0 0 0 3px #1677ff55"></i>내 위치</span>
+        </div>
+      </div>
+    </section>
+    <footer>동대문구 공공시설 위치 안내 · 시작 화면 시안</footer>
+  </main>
+</body>
+</html>
